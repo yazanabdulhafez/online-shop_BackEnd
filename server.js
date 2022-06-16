@@ -5,14 +5,16 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 const indexController = require("./controllers/index.controller");
 const { seedUserData } = require("./models/User");
-const { getUsers, getUser, createUser, addToFav, addToCart, deleteFromFav, deleteFromCart } = require("./controllers/user.controller");
-const apiDataController = require("./controllers/apiData.controller");
+const { getUsers, getUser, createUser, getProducts, createItem, updateItem, deleteItem } = require("./controllers/user.controller");
+const { addToCart, removeFromCart } = require("./controllers/cart.controller");
+const { addToFav, removeFromFav } = require("./controllers/favorite.controller");
+// const apiDataController = require("./controllers/apiData.controller");
 
 
 require("dotenv").config();
-const app = express();
-app.use(express.json());
-app.use(cors());
+const server = express();
+server.use(express.json());
+server.use(cors());
 
 const PORT = process.env.PORT || 8001;
 const atlasDbUrl = process.env.ATLAS_DB_URL;
@@ -22,17 +24,22 @@ mongoose.connect(atlasDbUrl, { useNewUrlParser: true, useUnifiedTopology: true }
 /* use this one time to inisalize the database */
 // seedUserData();
 
-app.get("/", indexController);
-app.get("/products", apiDataController);
+server.get("/", indexController);
+// server.get("/products", apiDataController);
 
-app.get("/users", getUsers);
-app.get("/user/:email", getUser);
+server.get("/users", getUsers);
+server.get("/products", getProducts);
+server.get("/user/:email", getUser);
+server.post("/user/?:email", createUser);
 
-app.post("/user/:email", createUser);
-app.put("/item/:email", addToFav);
-app.put("/item/:email", addToCart);
-app.delete('/item/:id', deleteFromFav);
-app.delete('/item/:id', deleteFromCart);
+server.post("/item", createItem);
+server.put("/item/:id", updateItem);
+server.delete("/item/:email/:id", deleteItem);
 
+server.post("/favList", addToFav);
+server.delete("/favList/:email/:id", removeFromFav);
 
-app.listen(PORT, () => console.log(`the server is running on port ${PORT}`));
+server.post("/cart", addToCart);
+server.delete("/cart/:email/:id", removeFromCart);
+
+server.listen(PORT, () => console.log(`the server is running on port ${PORT}`));
