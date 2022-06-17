@@ -21,7 +21,7 @@ const atlasDbUrl = process.env.ATLAS_DB_URL;
 
 mongoose.connect(atlasDbUrl, { useNewUrlParser: true, useUnifiedTopology: true }).then(() => console.log('connected to the DB')).catch(error => console.log(`not connected to DB error:${error.message}`));
 
-/* use this one time to inisalize the database */
+/* use this one time to initialize the database */
 // seedUserData();
 
 server.get("/", indexController);
