@@ -11,9 +11,9 @@ const getUsers = (req, res) => {
     .then((items) => {
       let users = [];
       items.forEach(item => users.push(item.email));
-      res.status(200).send(users)
+      res.status(200).json(users)
     })
-    .catch((err) => res.status(500).send("There was problem in the Data base"));
+    .catch((err) => res.status(500).json("There was problem in the Data base"));
 };
 
 const getProducts = (req, res) => {
@@ -23,16 +23,16 @@ const getProducts = (req, res) => {
     .then((items) => {
       let products = [];
       items.forEach(item => item.addedProducts.map(item => products.push(item)));
-      res.status(200).send(products)
+      res.status(200).json(products)
     })
-    .catch((err) => res.status(500).send("There was problem in the Data base"));
+    .catch((err) => res.status(500).json("There was problem in the Data base"));
 };
 
 const getUser = (req, res) => {
   userModel
     .find({ email: req.params.email })
-    .then((item) => res.status(201).send(item))
-    .catch((err) => res.status(500).send("There was problem in the Data base"));
+    .then((item) => res.status(201).json(item))
+    .catch((err) => res.status(500).json("There was problem in the Data base"));
 };
 
 const createUser = (req, res) => {
@@ -48,10 +48,10 @@ const createUser = (req, res) => {
     if (userData == null) {
       newUser
         .save()
-        .then(() => userModel.findOne({ email: req.params.email }).then((item) => res.status(201).send(item)))
-        .catch((error) => res.status(401).send(error.message));
+        .then(() => userModel.findOne({ email: req.params.email }).then((item) => res.status(201).json(item)))
+        .catch((error) => res.status(401).json(error.message));
     } else {
-      res.status(401).send("Duplicate User");
+      res.status(401).json("Duplicate User");
     }
   })
 };
@@ -61,7 +61,7 @@ const createComment = (req, res) => {
   const { id, email, text } = req.body;
   userModel.findOne({ email: productEmail }, (error, userData) => {
     if (error) {
-      res.status(500).send(error.message);
+      res.status(500).json(error.message);
     } else {
 
       userData.addedProducts.map(item => {
@@ -74,7 +74,7 @@ const createComment = (req, res) => {
         }
       })
       userData.save();
-      res.status(200).send(userData);
+      res.status(200).json(userData);
     }
   })
 }
@@ -83,9 +83,9 @@ const createItem = (req, res) => {
   const { email, id, title, price, description, category, image } = req.body;
   userModel.findOne({ email: email }, (error, userData) => {
     if (error) {
-      res.send(error.message);
+      res.json(error.message);
     } else if (userData.addedProducts.some(element => element.id === id)) {
-      res.send('data already exist');
+      res.json('data already exist');
     } else {
       userData.addedProducts.push({
         id: id,
@@ -97,7 +97,7 @@ const createItem = (req, res) => {
         comments: []
       });
       userData.save();
-      res.send(userData);
+      res.json(userData);
     }
   })
 }
@@ -107,7 +107,7 @@ const updateItem = (req, res) => {
   const { email, title, price, description, category, image, comments } = req.body;
   userModel.findOne({ email: email }, (error, userData) => {
     if (error) {
-      res.send(error.message);
+      res.json(error.message);
     } else {
       const index = userData.addedProducts.findIndex(element => element.id == id);
       userData.addedProducts.splice(index, 1, {
@@ -120,7 +120,7 @@ const updateItem = (req, res) => {
         comments: comments
       });
       userData.save();
-      res.send(userData);
+      res.json(userData);
     }
   })
 }
@@ -131,11 +131,11 @@ const deleteItem = (req, res) => {
   const email = req.params.email;
   userModel.findOne({ email: email }, (error, userData) => {
     if (error) {
-      res.send(error.message);
+      res.json(error.message);
     } else {
       userData.addedProducts = userData.addedProducts.filter(element => element.id != id);
       userData.save();
-      res.send(userData);
+      res.json(userData);
     }
   })
 }
