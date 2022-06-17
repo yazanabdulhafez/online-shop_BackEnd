@@ -2,7 +2,14 @@
 
 const { userModel } = require('../models/User');
 
-
+const getData = (req, res) => {
+  userModel
+    .find({})
+    .then((items) => {
+      res.status(200).json(items)
+    })
+    .catch((err) => res.status(500).json("There was problem in the Data base"));
+}
 
 const getUsers = (req, res) => {
 
@@ -160,4 +167,4 @@ const deleteItem = (req, res) => {
 }
 
 
-module.exports = { getUsers, getProducts, getUser, getComments, createUser, createComment, createItem, updateItem, deleteItem }
+module.exports = { getData, getUsers, getProducts, getUser, getComments, createUser, createComment, createItem, updateItem, deleteItem }
