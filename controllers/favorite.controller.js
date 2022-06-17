@@ -4,6 +4,17 @@
 const { userModel } = require('../models/User');
 
 
+const getFavItems = (req, res) => {
+
+  userModel.findOne({ email: req.params.email }, (error, userData) => {
+    if (error) {
+      res.status(500).send(error.message);
+    } else {
+      res.status(200).send(userData.favoriteList);
+    }
+  })
+}
+
 const addToFav = (req, res) => {
   const { email, id, title, price, description, category, image, comments } = req.body;
   userModel.findOne({ email: email }, (error, userData) => {
@@ -42,4 +53,4 @@ const removeFromFav = (req, res) => {
   })
 }
 
-module.exports = { addToFav, removeFromFav }
+module.exports = { addToFav, removeFromFav, getFavItems }

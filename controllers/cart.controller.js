@@ -2,6 +2,17 @@
 
 const { userModel } = require('../models/User');
 
+const getCartItems = (req, res) => {
+
+  userModel.findOne({ email: req.params.email }, (error, userData) => {
+    if (error) {
+      res.status(500).send(error.message);
+    } else {
+      res.status(200).send(userData.cartList);
+    }
+  })
+}
+
 
 const addToCart = (req, res) => {
   const { email, id, title, price, description, category, image, comments } = req.body;
@@ -41,4 +52,4 @@ const removeFromCart = (req, res) => {
   })
 }
 
-module.exports = { addToCart, removeFromCart };
+module.exports = { addToCart, removeFromCart, getCartItems };
