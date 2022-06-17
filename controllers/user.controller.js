@@ -56,6 +56,25 @@ const createUser = (req, res) => {
   })
 };
 
+const getComments = (req, res) => {
+  const productEmail = req.params.email;
+  const id = req.params.id;
+  userModel.findOne({ email: productEmail }, (error, userData) => {
+    if (error) {
+      res.status(500).json(error.message);
+    } else {
+
+      const comments = [];
+      userData.addedProducts.map((item) => {
+        if (item.id == id) {
+          item.comments.forEach(comment => comments.push(comment))
+        }
+      })
+      res.status(200).json(comments);
+    }
+  })
+}
+
 const createComment = (req, res) => {
   const productEmail = req.params.email;
   const { id, email, text } = req.body;
@@ -141,13 +160,4 @@ const deleteItem = (req, res) => {
 }
 
 
-class Comment {
-  constructor(email, text, createdAt) {
-    this.email = email;
-    this.text = text;
-    this.createdAt = createdAt;
-  }
-}
-
-
-module.exports = { getUsers, getProducts, getUser, createUser, createComment, createItem, updateItem, deleteItem }
+module.exports = { getUsers, getProducts, getUser, getComments, createUser, createComment, createItem, updateItem, deleteItem }
